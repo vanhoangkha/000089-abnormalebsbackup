@@ -1,0 +1,85 @@
+[
+{
+	"uri": "/vi/2-prerequiste/2.1-creates3bucket/",
+	"title": "Create S3 bucket",
+	"tags": [],
+	"description": "",
+	"content": "Create S3 bucket Tải source tại đây\n  Truy cập vào giao diện S3\n Chọn Buckets Chọn Create bucket    Trong giao diện Create bucket  Chọn Create bucket  Chọn Upload  Ta sẽ upload file anomaly-detection-lambda.zip. Chọn Upload  Hoàn thành upload  "
+},
+{
+	"uri": "/vi/1-introduce/",
+	"title": "Giới thiệu",
+	"tags": [],
+	"description": "",
+	"content": "Giới thiệu Bảo vệ dữ liệu của bạn khỏi các cuộc tấn công mạng và mã độc tống tiền là trách nhiệm quan trọng và việc thực hiện các bước cần thiết để phát hiện hoạt động bất thường ở mọi cấp trong tổ chức của bạn có thể giúp bạn giữ dữ liệu của mình an toàn nhất có thể. Lưu trữ dữ liệu là một lĩnh vực quan trọng mà bạn có thể và nên triển khai tính năng phát hiện bất thường.\nĐể bảo vệ bộ lưu trữ của bạn, xây dựng một serverless pipeline đơn giản để phát hiện các điểm bất thường xảy ra trên ổ đĩa Amazon Elastic Block Store (EBS). Chúng ta sử dụng AWS Backup cùng với một số dịch vụ do AWS quản lý khác để xây dựng giải pháp.\nKhởi đầu của giải pháp là AWS Backup. Khi một ổ đĩa Amazon EBS được sao lưu, một snapshot sẽ được tạo. Bằng cách so sánh snapshot hiện tại này với snapshot đã tạo trước đó, có thể dễ dàng xác định số lượng khối đã thay đổi giữa hai snapshot. Giá trị khối đã thay đổi này được xuất bản lên Amazon CloudWatch dưới dạng chỉ số tùy chỉnh, trong đó cảnh báo Amazon CloudWatch được định cấu hình để phát hiện điểm bất thường trên chỉ số. Bằng cách sử dụng các khả năng máy học mạnh mẽ tích hợp sẵn của Amazon CloudWatch, các điểm bất thường sẽ được phát hiện và hiển thị khi dải ngưỡng của cảnh báo bị vi phạm. Khi điều này xảy ra, mọi thông báo cảnh báo được định cấu hình sẵn sẽ được kích hoạt.\nĐể xây dựng quy trình phát hiện bất thường, chúng ta sử dụng các dịch vụ sau:\n AWS Backup: Chúng tôi sẽ sử dụng AWS Backup để quản lý các bản sao lưu của ổ đĩa Amazon EBS. Chúng ta sẽ tạo một kế hoạch dự phòng để chọn khối lượng EBS dựa trên khóa thẻ bạn cung cấp trong quá trình thiết lập. Sau khi quá trình sao lưu bắt đầu, một snapshot sẽ được tạo và các sự kiện từ quy trình AWS Backup được xuất bản lên Amazon EventBridge. Amazon EventBridge: Amazon EventBridge là bus sự kiện không có máy chủ và nó nhận các sự kiện đến được xuất bản từ AWS Backup. Đối với các sự kiện sao lưu khớp với quy tắc được định cấu hình sẵn mà chúng tôi tạo, EventBridge sẽ kích hoạt một chức năng AWS Lambda. AWS Lambda: Tất cả các sự kiện AWS Backup phù hợp với quy tắc Amazon EventBridge đều được chuyển đến AWS Lambda. Từ sự kiện này, hàm AWS Lambda trích xuất khối lượng Amazon EBS Amazon Resource Name (ARN) và tên snapshot hiện tại. Sử dụng ARN làm khóa, chi tiết snapshot dự phòng trước đó được truy xuất từ ​​bảng Amazon DynamoDB. Nếu một mục snapshot trước đó được tìm thấy cho ARN đã cho, thì snapshot hiện tại và trước đó sẽ được so sánh để thay đổi. Giá trị thay đổi đã tính toán được chuyển đến Amazon CloudWatch dưới dạng số liệu tùy chỉnh. Nếu không tìm thấy mục snapshot trước đó trong bảng Amazon DynamoDB, thì một mục mới sẽ được tạo và cảnh báo Amazon CloudWatch được định cấu hình cho ARN. Amazon DynamoDB: Đối với mỗi sự kiện sao lưu đến chức năng AWS Lambda, một bảng Amazon DynamoDB được sử dụng để duy trì thông tin chi tiết về sự kiện. ARN từ sự kiện được sử dụng làm khóa phân vùng và tên snapshot được đính kèm làm thuộc tính cho mục. Amazon CloudWatch: Một số liệu tùy chỉnh được tạo trong hàm AWS Lambda và được gửi tới Amazon CloudWatch. Giá trị số liệu chứa số khối đã thay đổi giữa snapshot hiện tại và snapshot trước đó. Cảnh báo CloudWatch, đã được định cấu hình và tạo trước đó trong hàm AWS Lambda, được kích hoạt khi dải ngưỡng phát hiện bất thường bị vi phạm. Amazon Simple Notification Service (Amazon SNS): Khi cảnh báo CloudWatch được kích hoạt, chủ đề Amazon SNS sẽ gửi thông báo đến địa chỉ email được định cấu hình trong quá trình thiết lập.  "
+},
+{
+	"uri": "/vi/",
+	"title": "Phát hiện bất thường AWS Backup cho ổ đĩa Amazon EBS",
+	"tags": [],
+	"description": "",
+	"content": "Phát hiện bất thường AWS Backup cho ổ đĩa Amazon EBS Bảo vệ dữ liệu của bạn khỏi các cuộc tấn công mạng và mã độc tống tiền là trách nhiệm quan trọng và việc thực hiện các bước cần thiết để phát hiện hoạt động bất thường ở mọi cấp trong tổ chức của bạn có thể giúp bạn giữ dữ liệu của mình an toàn nhất có thể. Lưu trữ dữ liệu là một lĩnh vực quan trọng mà bạn có thể và nên triển khai tính năng phát hiện bất thường.\nĐể bảo vệ bộ lưu trữ của bạn, xây dựng một serverless pipeline đơn giản để phát hiện các điểm bất thường xảy ra trên ổ đĩa Amazon Elastic Block Store (EBS). Chúng ta sử dụng AWS Backup cùng với một số dịch vụ do AWS quản lý khác để xây dựng giải pháp.\nKhởi đầu của giải pháp là AWS Backup. Khi một ổ đĩa Amazon EBS được sao lưu, một snapshot sẽ được tạo. Bằng cách so sánh snapshot hiện tại này với snapshot đã tạo trước đó, có thể dễ dàng xác định số lượng khối đã thay đổi giữa hai snapshot. Giá trị khối đã thay đổi này được xuất bản lên Amazon CloudWatch dưới dạng chỉ số tùy chỉnh, trong đó cảnh báo Amazon CloudWatch được định cấu hình để phát hiện điểm bất thường trên chỉ số. Bằng cách sử dụng các khả năng máy học mạnh mẽ tích hợp sẵn của Amazon CloudWatch, các điểm bất thường sẽ được phát hiện và hiển thị khi dải ngưỡng của cảnh báo bị vi phạm. Khi điều này xảy ra, mọi thông báo cảnh báo được định cấu hình sẵn sẽ được kích hoạt.\nĐể xây dựng quy trình phát hiện bất thường, chúng ta sử dụng các dịch vụ sau:\n AWS Backup: Chúng tôi sẽ sử dụng AWS Backup để quản lý các bản sao lưu của ổ đĩa Amazon EBS. Chúng ta sẽ tạo một kế hoạch dự phòng để chọn khối lượng EBS dựa trên khóa thẻ bạn cung cấp trong quá trình thiết lập. Sau khi quá trình sao lưu bắt đầu, một snapshot sẽ được tạo và các sự kiện từ quy trình AWS Backup được xuất bản lên Amazon EventBridge. Amazon EventBridge: Amazon EventBridge là bus sự kiện không có máy chủ và nó nhận các sự kiện đến được xuất bản từ AWS Backup. Đối với các sự kiện sao lưu khớp với quy tắc được định cấu hình sẵn mà chúng tôi tạo, EventBridge sẽ kích hoạt một chức năng AWS Lambda. AWS Lambda: Tất cả các sự kiện AWS Backup phù hợp với quy tắc Amazon EventBridge đều được chuyển đến AWS Lambda. Từ sự kiện này, hàm AWS Lambda trích xuất khối lượng Amazon EBS Amazon Resource Name (ARN) và tên snapshot hiện tại. Sử dụng ARN làm khóa, chi tiết snapshot dự phòng trước đó được truy xuất từ ​​bảng Amazon DynamoDB. Nếu một mục snapshot trước đó được tìm thấy cho ARN đã cho, thì snapshot hiện tại và trước đó sẽ được so sánh để thay đổi. Giá trị thay đổi đã tính toán được chuyển đến Amazon CloudWatch dưới dạng số liệu tùy chỉnh. Nếu không tìm thấy mục snapshot trước đó trong bảng Amazon DynamoDB, thì một mục mới sẽ được tạo và cảnh báo Amazon CloudWatch được định cấu hình cho ARN. Amazon DynamoDB: Đối với mỗi sự kiện sao lưu đến chức năng AWS Lambda, một bảng Amazon DynamoDB được sử dụng để duy trì thông tin chi tiết về sự kiện. ARN từ sự kiện được sử dụng làm khóa phân vùng và tên snapshot được đính kèm làm thuộc tính cho mục. Amazon CloudWatch: Một số liệu tùy chỉnh được tạo trong hàm AWS Lambda và được gửi tới Amazon CloudWatch. Giá trị số liệu chứa số khối đã thay đổi giữa snapshot hiện tại và snapshot trước đó. Cảnh báo CloudWatch, đã được định cấu hình và tạo trước đó trong hàm AWS Lambda, được kích hoạt khi dải ngưỡng phát hiện bất thường bị vi phạm. Amazon Simple Notification Service (Amazon SNS): Khi cảnh báo CloudWatch được kích hoạt, chủ đề Amazon SNS sẽ gửi thông báo đến địa chỉ email được định cấu hình trong quá trình thiết lập.  Nội dung  Giới thiệu Chuẩn bị Kiểm tra tài nguyên Tạo backup Giám sát Dọn dẹp tài nguyên  "
+},
+{
+	"uri": "/vi/2-prerequiste/",
+	"title": "Các bước chuẩn bị",
+	"tags": [],
+	"description": "",
+	"content": "Các bước chuẩn bị  Tạo S3 bucket Tạo EBS volume Tạo Stack CloudFormation  "
+},
+{
+	"uri": "/vi/2-prerequiste/2.2-createebs/",
+	"title": "Tạo EBS",
+	"tags": [],
+	"description": "",
+	"content": "Tạo EBS   Thực hiện tạo EBS\n Truy cập vào giao diện EC2 Chọn Volume Chọn Create volume     Thực hiện cấu hình EBS\n  Thực hiện đánh tag với Key là AnomalyDetection. Sau đó chọn Create volume.  Tạo EBS thành công.  Kiểm tra tag.  "
+},
+{
+	"uri": "/vi/3-checkresource/",
+	"title": "Kiểm tra tài nguyên đã tạo ",
+	"tags": [],
+	"description": "",
+	"content": "Kiểm tra tài nguyên đã tạo  Kiểm tra Backup vaults đã tạo từ CloudFormation  Kiểm tra Backup plan. Chọn backup plan đã tạo từ CloudFormation.  Xem chi tiết Backup rules và Resource assignments  Kiểm tra Backup plab tags   Truy cập vào giao diện Amazon EventBridge\n Chọn Rules Xem rule đã được tạo.    Kiểm tra Event pattern  Kiểm tra Target  Kiểm tra Lambda function  "
+},
+{
+	"uri": "/vi/2-prerequiste/2.3-createstack/",
+	"title": "Tạo tài nguyên bằng CloudFormation",
+	"tags": [],
+	"description": "",
+	"content": "Tạo tài nguyên bằng CloudFormation  Thực hiện tạo tài nguyên bằng CloudFormation. Chọn Create stack.   Cấu hình Create stack\n Chọn Template is ready Chọn Upload a template file Upload file anomaly-detection-cfn.json Chọn Next     Nhập Stack name là AnomalyDetectionStack\n Hoàn thành các thông tin, nhập email để nhận thông báo. Nhập TagKey của EBS. Nhập S3 bucket name đã tạo. Chọn Next    Chọn Next  Chọn I acknowledge that AWS CloudFormation might create IAM resources. Sau đó chọn Submit.  Đợi khoảng 5 phút sau, stack tạo thành công.  Kiểm tra email đã nhập sẽ nhận được thông báo.   Lưu ý có thể mail được gửi đến trong thư mục spam. Chọn Confirm subscription  Sau khi Subscription confirmed!  "
+},
+{
+	"uri": "/vi/4-createbackup/",
+	"title": "Tạo backup",
+	"tags": [],
+	"description": "",
+	"content": "Tạo backup   Trong phần này, chúng ta sẽ tạo On-demand backup.\n Truy cập vào giao diện AWS Backup Chọn Create on-demand backup     Hoàn thành thông tin tạo backup\n Đối với Resource type, chọn EBS Chọn Volume ID đã tạo. Sau đó thực hiện chọn Backup window là Create backup now (Bắt đầu sau 1 giờ tạo) Chọn Always cho Retention period Chọn Backup vault đã tạo. Sử dụng IAM role mặc định. Chọn Create on-demand backup    Bạn sẽ thấy job backup đang trong trạng thái Running  Xem chi tiết backup job.  Khoảng 5 phút sau, backup job sẽ hoàn thành.  "
+},
+{
+	"uri": "/vi/5-monitoring/",
+	"title": "Giám sát",
+	"tags": [],
+	"description": "",
+	"content": "Giám sát   Truy cập vào AWS CloudWatch\n Chọn All alarms Bạn sẽ thấy có 1 alarm xuất hiện (2-3 phút kể từ lần backup đầu tiên)     Cảnh báo (Alarm) được tạo bởi hàm AWS Lambda mà chúng ta đã triển khai và được định cấu hình để phát hiện các điểm bất thường dựa trên chỉ số tùy chỉnh (custom metrics) của Amazon CloudWatch sẽ được gửi trong các lần sao lưu (backup) tiếp theo.\n Chọn alarm xuất hiện, bạn sẽ xem các thông số chi tiết.    Tại thời điểm này, chúng ta không có bất kỳ dữ liệu số liệu nào nên cảnh báo hiển thị không đủ dữ liệu. Trên thực tế, để đào tạo đúng cách mô hình phát hiện điểm bất thường của Amazon CloudWatch, chúng ta sẽ cần trải qua khá nhiều lần lặp lại sao lưu trước khi có thể thiết lập một mẫu.  Kiểm tra ngay bây giờ, một số lượng đáng kể các bản sao lưu đã diễn ra và bạn sẽ nhận thấy một dải màu xám trải dài trên màn hình. Đây là dải phát hiện bất thường và khi các snapshot hiện tại và trước đó được so sánh và có quá nhiều khối bị thay đổi, ngưỡng của dải màu xám bị phá vỡ và báo động được kích hoạt.   Cuối cùng, hãy xem số liệu tùy chỉnh thực tế của Amazon CloudWatch. Nếu nhấp vào nút Xem trong chỉ số ở phần phía trên bên phải của biểu đồ, thì bạn sẽ được chuyển hướng đến trang chỉ số, nơi bạn có thể xem tất cả các điểm dữ liệu chỉ số, cũng như chỉ số và cấu hình phát hiện điểm bất thường của nó.  "
+},
+{
+	"uri": "/vi/6-cleanup/",
+	"title": "Dọn dẹp tài nguyên",
+	"tags": [],
+	"description": "",
+	"content": "Dọn dẹp tài nguyên  Xóa stack CloudFormation  Truy cập vào trang CloudFormation Chọn stack cần xóa Chọn Delete Xác nhận xóa Đợi khoảng 5 phút xóa stack thành công.    "
+},
+{
+	"uri": "/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
