@@ -4,6 +4,8 @@
     <title>Tạo backup on Phát hiện bất thường AWS Backup cho ổ đĩa Amazon EBS</title>
     <link>/vi/4-createbackup/</link>
     <description>Recent content in Tạo backup on Phát hiện bất thường AWS Backup cho ổ đĩa Amazon EBS</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="/vi/4-createbackup/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo</generator>
+    <language>vi</language>
+    <atom:link href="/vi/4-createbackup/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
