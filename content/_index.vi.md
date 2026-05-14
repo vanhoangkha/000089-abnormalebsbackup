@@ -1,6 +1,6 @@
 ---
 title : "Phát hiện bất thường AWS Backup cho ổ đĩa Amazon EBS"
-date : "`r Sys.Date()`"
+date: 2024-01-01
 weight : 1
 chapter : false
 ---
